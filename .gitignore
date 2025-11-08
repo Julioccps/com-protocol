@@ -1,6 +1,5 @@
 *.bin
-channel.bin
-corrupted.bin
-
 *.o
+build/*.bin
+build/*.o
 

@@ -5,7 +5,7 @@
 #include <string.h>
 
 #define START_BYTE 0x55
-#define MAX_PAYLOAD_SIZE 256
+#define MAX_PAYLOAD_SIZE 255
 
 typedef struct {
     uint8_t start_byte;
@@ -153,7 +153,7 @@ int parse_byte(protocol_parser_t* parser, uint8_t byte){
             }
             break;
         case STATE_READ_PAYLOAD:
-            parser->current_frame.payload[parser->payload_index++];
+            parser->current_frame.payload[parser->payload_index++] = byte;
             if (parser->payload_index >= parser->current_frame.length){
                 parser->state = STATE_VERIFY_CHECKSUM;
             }
