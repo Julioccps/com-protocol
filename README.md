@@ -27,9 +27,8 @@ The `main.c` file includes a series of tests to validate the protocol's function
 This project uses CMake. To build the executable:
 
 1.  Clone the repository.
-2.  Create a build directory:
+2.  Go to  build directory:
     ```sh
-    mkdir build
     cd build
     ```
 3.  Run CMake to configure the project:
