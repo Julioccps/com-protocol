@@ -1,0 +1,6 @@
+*.bin
+channel.bin
+corrupted.bin
+
+*.o
+
