@@ -175,7 +175,7 @@ int parse_byte(protocol_parser_t* parser, uint8_t byte){
 }
 
 int main(){
-    printf("|--- TEST 1: Normal transmition ----------|\n");
+    printf("|--- TEST 1: Normal transmission ----------|\n");
 
     uint8_t message[] = "Hello, Protocol!";
     protocol_frame_t tr_frame = mount_frame(message, 1, strlen((char*)message));
