@@ -15,8 +15,8 @@ The `main.c` file includes a series of tests to validate the protocol's function
 * **Frame Structure:** Defines a `protocol_frame_t` with the following structure:
     * `START_BYTE` (0x55)
     * `message_id` (1 byte)
-    * `length` (1 byte, max payload 256)
-    * `payload` (up to 256 bytes)
+    * `length` (1 byte, max payload 255)
+    * `payload` (up to 255 bytes)
     * `checksum` (1 byte)
 * **Checksum:** Uses a simple XOR checksum (`calculate_checksum`) for all data bytes (ID, length, and payload) to ensure data integrity.
 * **State Machine Parser:** Implements a simple state machine (`parse_byte`) to process bytes one at a time and validate the frame structure and checksum.
@@ -44,7 +44,9 @@ This will create an executable named `com_protocol` in the `build` directory.
 ---
 ## Running Tests
 
-After building, you can run the built-in tests directly from the root directory:
+After building, you can run the built-in tests directly from the `build` directory:
 
 ```sh
-./build/com_protocol
+cd build
+./com_protocol
+```
