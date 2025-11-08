@@ -1,4 +1,4 @@
-# Comunication Protocol
+# Communication Protocol
 ---
 ## Description
 
