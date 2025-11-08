@@ -95,11 +95,6 @@ int receive_from_file(protocol_frame_t* frame, const char* filename){
     return 0;
 }
 
-
-int main(){
-    return 0;
-}
-
 int verify_checksum(const protocol_frame_t* frame){
     uint8_t checksum_data[2 + MAX_PAYLOAD_SIZE];
     checksum_data[0] = frame->message_id;
@@ -113,8 +108,8 @@ void simulate_corruption(protocol_frame_t* frame, int corruption_chance){
     if (corruption_chance > 0 && (rand() % 100 < corruption_chance)){
         int byte_to_corrupt = 2 + (rand() % (frame->length + 1)); 
         uint8_t* frame_data = (uint8_t*)frame;
-        frame_data[byte_to_corrupt] = 0x0F;
-        printf("Simulated corruption at byte ");
+        frame_data[byte_to_corrupt] ^= 0x0F;
+        printf("Simulated corruption at byte %d\n", byte_to_corrupt);
     }
 }
 
@@ -162,6 +157,7 @@ int parse_byte(protocol_parser_t* parser, uint8_t byte){
             if (parser->payload_index >= parser->current_frame.length){
                 parser->state = STATE_VERIFY_CHECKSUM;
             }
+            break;
         case STATE_VERIFY_CHECKSUM:
             parser->current_frame.checksum = byte;
             if (verify_checksum(&parser->current_frame)){
@@ -176,4 +172,56 @@ int parse_byte(protocol_parser_t* parser, uint8_t byte){
     }
     return 0; // Frame incomplete
 
+}
+
+int main(){
+    printf("|--- TEST 1: Normal transmition ----------|\n");
+
+    uint8_t message[] = "Hello, Protocol!";
+    protocol_frame_t tr_frame = mount_frame(message, 1, strlen((char*)message));
+    transmit_to_file(&tr_frame, "channel.bin");
+
+    protocol_frame_t rc_frame;
+    if (receive_from_file(&rc_frame, "channel.bin") == 0){
+        print_frame(&rc_frame);
+        if (verify_checksum(&rc_frame)){
+            printf("Valid checksum, message intact.\n");
+        }
+        else{
+            printf("Invalid checksum, message corrupted\n");
+        }
+    }
+    
+    printf("\n|--- TEST 2: Simulated corruption test ---|\n");
+
+    protocol_frame_t corrupted_frame = mount_frame((uint8_t*)"Test message", 12, 2);
+    simulate_corruption(&corrupted_frame, 100); // 100% of chance of corruption
+    transmit_to_file(&corrupted_frame, "corrupted.bin");
+
+    protocol_frame_t rc_corrupted;
+    if (receive_from_file(&rc_corrupted, "corrupted.bin") == 0){
+        print_frame(&rc_corrupted);
+        if(verify_checksum(&rc_corrupted)){
+            printf("Valid checksum! (unexpected)\n");
+        }
+        else{
+            printf("Invalid checksum, indentified corruption correctly\n");
+        }
+    }
+    printf("\n|--- TEST 3: State machine test ----------|\n");
+    
+    protocol_parser_t parser;
+    init_parser(&parser);
+
+    uint8_t test_data[] = {START_BYTE, 0x03, 0x05, 'H', 'e', 'l', 'l', 'o', 0x00}; // Invalid cecksum
+    for (int i = 0; i < sizeof(test_data); i++){
+        int result = parse_byte(&parser, test_data[i]);
+        if (result == 1){
+            printf("Complete frame recieved via parser\n");
+        }
+        else if (result == -1){
+            printf("Corrupted frame detected via parser\n");
+        }
+    }
+    return 0;
 }

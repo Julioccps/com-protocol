@@ -1,0 +1,3 @@
+/home/julio/Desktop/c/prj/com_protocol/build/CMakeFiles/com_protocol.dir
+/home/julio/Desktop/c/prj/com_protocol/build/CMakeFiles/edit_cache.dir
+/home/julio/Desktop/c/prj/com_protocol/build/CMakeFiles/rebuild_cache.dir
