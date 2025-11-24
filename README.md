@@ -19,6 +19,7 @@ The `main.c` file includes a series of tests to validate the protocol's function
     * `payload` (up to 255 bytes)
     * `checksum` (1 byte)
 * **Checksum:** Uses a simple XOR checksum (`calculate_checksum`) for all data bytes (ID, length, and payload) to ensure data integrity.
+
 * **State Machine Parser:** Implements a simple state machine (`parse_byte`) to process bytes one at a time and validate the frame structure and checksum.
 
 ---
